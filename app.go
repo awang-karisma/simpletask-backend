@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
 	"simpletask-backend/handlers"
 	"strings"
@@ -13,7 +14,11 @@ import (
 
 func main() {
 	server := echo.New()
-	corsHost := strings.Split(os.Getenv("APP_URL"), ",")
+	if os.Getenv("APP_CORS_URL") == "" {
+		server.Logger.Fatal("APP_CORS_URL env not set")
+	}
+	corsHost := strings.Split(os.Getenv("APP_CORS_URL"), ",")
+	fmt.Printf("CORS : %s", os.Getenv("APP_CORS_URL"))
 	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: corsHost,
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
@@ -47,7 +52,10 @@ func migrate(db *sql.DB) {
 CREATE TABLE IF NOT EXISTS tasks(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	name VARCHAR NOT NULL,
-	status INTEGER
+	detail VARCHAR NOT NULL,
+	assignee VARCHAR NOT NULL,
+	due VARCHAR,
+	status INTEGER 
 );`
 	_, err := db.Exec(sql)
 	if err != nil {

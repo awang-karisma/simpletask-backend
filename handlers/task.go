@@ -22,7 +22,7 @@ func PutTask(db *sql.DB) echo.HandlerFunc {
 		var task models.Task
 		c.Bind(&task)
 
-		id, err := models.PutTask(db, task.Name, task.Status)
+		id, err := models.PutTask(db, task.Name, task.Detail, task.Assignee, task.Due, task.Status)
 		if err != nil {
 			return err
 		}
@@ -39,7 +39,7 @@ func EditTask(db *sql.DB) echo.HandlerFunc {
 		task.ID = id
 		c.Bind(&task)
 
-		_, err := models.EditTask(db, task.ID, task.Name, task.Status)
+		_, err := models.EditTask(db, task.ID, task.Name, task.Detail, task.Assignee, task.Due, task.Status)
 		if err != nil {
 			return err
 		}
